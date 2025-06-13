@@ -1,115 +1,61 @@
+import streamlit as st
+from PIL import Image
 
-import tkinter as tk
-from tkinter import messagebox
-from PIL import Image, ImageTk
+st.set_page_config(page_title="Simulador Ka - Rojo de Metilo", layout="centered")
 
-def cargar_imagen(ruta, tamaño=(200, 200)):
-    imagen = Image.open(ruta)
-    imagen = imagen.resize(tamaño)
-    return ImageTk.PhotoImage(imagen)
+st.title("🎓 Simulador: Determinación espectrofotométrica de Ka del Rojo de Metilo")
 
-ventana = tk.Tk()
-ventana.title("Simulador: Ka del Rojo de Metilo")
+# Etapa 1: Preparación de la solución madre
+st.header("1️⃣ Preparación de solución madre")
+img_balanza = Image.open("images/balanza.png")
+st.image(img_balanza, caption="Balanza", width=300)
 
-def fase1():
-    limpiar_ventana()
-    tk.Label(ventana, text="Preparación de solución madre", font=("Arial", 16)).pack()
-    img_balanza = cargar_imagen("balanza.png")
-    tk.Label(ventana, image=img_balanza).pack()
-    ventana.img_balanza = img_balanza
-    tk.Button(ventana, text="Pese 0.1 gramos de rojo de metilo", command=pedir_peso).pack()
+if st.button("Pesar 0.1 g de Rojo de Metilo"):
+    peso = st.text_input("Ingrese la masa pesada:", key="peso")
+    if peso == "0.1 g" or peso == "0.1":
+        if st.button("Preparar solución estándar"):
+            img_pipeta = Image.open("images/pipeta.png")
+            st.image(img_pipeta, caption="Preparación de solución estándar", width=300)
+            st.success("✅ Se pipetea 5 mL de la solución madre, se añade 50 mL de etanol al 95% y se afora con agua destilada.")
+    elif peso:
+        st.error("❌ Masa incorrecta. Intenta con 0.1 g.")
 
-def pedir_peso():
-    limpiar_ventana()
-    tk.Label(ventana, text="Ingrese la masa pesada (g):").pack()
-    entrada = tk.Entry(ventana)
-    entrada.pack()
-    def verificar():
-        if entrada.get() == "0.1":
-            preparar_estandar()
-        else:
-            messagebox.showerror("Error", "Debe ser exactamente 0.1 g")
-    tk.Button(ventana, text="Confirmar", command=verificar).pack()
+# Etapa 2: Preparación de soluciones ácida y básica
+st.header("2️⃣ Preparación de soluciones ácida y básica")
 
-def preparar_estandar():
-    limpiar_ventana()
-    tk.Label(ventana, text="Preparación de solución estándar", font=("Arial", 14)).pack()
-    img_pipeta = cargar_imagen("pipeta.png")
-    tk.Label(ventana, image=img_pipeta).pack()
-    ventana.img_pipeta = img_pipeta
-    texto = "Se pipetea 5 mL de la solución madre,\nse añade 50 mL de etanol al 95%\ny se afora con agua destilada."
-    tk.Label(ventana, text=texto).pack()
-    tk.Button(ventana, text="Continuar", command=preparacion_acida).pack()
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Solución Ácida")
+    img_hcl = Image.open("images/vaso_HCl.png")
+    st.image(img_hcl, caption="HCl", width=200)
+    if st.button("Usar HCl"):
+        img_roja = Image.open("images/disolucion_roja.png")
+        st.image(img_roja, caption="Solución roja-púrpura", width=300)
+    if st.button("Usar Acetato (ácido)"):
+        st.error("❌ Incorrecto. Esa es la base.")
 
-def preparacion_acida():
-    limpiar_ventana()
-    tk.Label(ventana, text="Preparación de solución ácida", font=("Arial", 14)).pack()
-    img_hcl = cargar_imagen("vaso_HCl.png")
-    img_acetato = cargar_imagen("vaso_acetato.png")
-    btn_hcl = tk.Button(ventana, image=img_hcl, command=correcto_acido)
-    btn_acetato = tk.Button(ventana, image=img_acetato, command=incorrecto)
-    btn_hcl.pack(side="left", padx=20)
-    btn_acetato.pack(side="right", padx=20)
-    ventana.img_hcl = img_hcl
-    ventana.img_acetato = img_acetato
+with col2:
+    st.subheader("Solución Básica")
+    img_acetato = Image.open("images/vaso_acetato.png")
+    st.image(img_acetato, caption="Acetato de sodio", width=200)
+    if st.button("Usar Acetato (base)"):
+        img_amarilla = Image.open("images/disolucion_amarilla.png")
+        st.image(img_amarilla, caption="Solución amarilla", width=300)
+    if st.button("Usar HCl (base)"):
+        st.error("❌ Incorrecto. Esa es la solución ácida.")
 
-def correcto_acido():
-    limpiar_ventana()
-    img_sol_roja = cargar_imagen("disolucion_roja.png")
-    tk.Label(ventana, image=img_sol_roja).pack()
-    ventana.img_sol_roja = img_sol_roja
-    tk.Label(ventana, text="Disolución rojo púrpura obtenida.").pack()
-    tk.Button(ventana, text="Preparación de solución básica", command=preparacion_basica).pack()
+# Etapa 3: Finalización
+st.header("3️⃣ Espectrofotómetro")
 
-def incorrecto():
-    messagebox.showerror("Incorrecto", "Esta no es la opción correcta.")
+if st.button("Finalizar preparación"):
+    img_espectrofotometro = Image.open("images/espectrofotometro.png")
+    st.image(img_espectrofotometro, caption="Espectrofotómetro", width=300)
+    st.info("📥 Inserte la disolución ácida y básica.")
+    st.warning("⚠️ Error: Falta paso previo.")
 
-def preparacion_basica():
-    limpiar_ventana()
-    tk.Label(ventana, text="Preparación de solución básica", font=("Arial", 14)).pack()
-    img_hcl = cargar_imagen("vaso_HCl.png")
-    img_acetato = cargar_imagen("vaso_acetato.png")
-    btn_hcl = tk.Button(ventana, image=img_hcl, command=incorrecto)
-    btn_acetato = tk.Button(ventana, image=img_acetato, command=correcto_basico)
-    btn_hcl.pack(side="left", padx=20)
-    btn_acetato.pack(side="right", padx=20)
-    ventana.img_hcl = img_hcl
-    ventana.img_acetato = img_acetato
+    respuesta = st.text_input("¿Qué paso hace falta?", key="blanco")
+    if "blanco" in respuesta.lower():
+        img_espectro = Image.open("images/espectro.png")
+        st.image(img_espectro, caption="Espectro: Longitud de onda máxima", width=400)
+        st.success("✅ ¡Simulación completada! Ahora puedes analizar el espectro.")
 
-def correcto_basico():
-    limpiar_ventana()
-    img_sol_amarilla = cargar_imagen("disolucion_amarilla.png")
-    tk.Label(ventana, image=img_sol_amarilla).pack()
-    ventana.img_sol_amarilla = img_sol_amarilla
-    tk.Label(ventana, text="Disolución amarilla obtenida.").pack()
-    tk.Button(ventana, text="Finalizar", command=fase_final).pack()
-
-def fase_final():
-    limpiar_ventana()
-    img_espectro = cargar_imagen("espectrofotometro.png")
-    tk.Label(ventana, image=img_espectro).pack()
-    ventana.img_espectro = img_espectro
-    tk.Label(ventana, text="Coloque las disoluciones ácida y básica...").pack()
-    tk.Label(ventana, text="Error: algo falta. ¿Qué paso hace falta?").pack()
-    entrada = tk.Entry(ventana)
-    entrada.pack()
-    def verificar_respuesta():
-        if entrada.get().strip().lower() == "medir blanco":
-            mostrar_espectro()
-        else:
-            messagebox.showwarning("Incorrecto", "Pista: falta una medición previa...")
-    tk.Button(ventana, text="Confirmar", command=verificar_respuesta).pack()
-
-def mostrar_espectro():
-    limpiar_ventana()
-    img_espectro_final = cargar_imagen("espectro.png", tamaño=(400, 300))
-    tk.Label(ventana, image=img_espectro_final).pack()
-    ventana.img_espectro_final = img_espectro_final
-    tk.Label(ventana, text="Se observa el espectro con la longitud de onda máxima.").pack()
-
-def limpiar_ventana():
-    for widget in ventana.winfo_children():
-        widget.destroy()
-
-fase1()
-ventana.mainloop()

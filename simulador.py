@@ -47,20 +47,32 @@ with col2:
 # Etapa 3: Finalización
 st.header("3️⃣ Espectrofotómetro")
 
+if "mostrar_pregunta" not in st.session_state:
+    st.session_state.mostrar_pregunta = False
+
+if "respuesta_correcta" not in st.session_state:
+    st.session_state.respuesta_correcta = False
+
 if st.button("Finalizar preparación"):
     img_espectrofotometro = Image.open("espectrofotometro.png")
     st.image(img_espectrofotometro, caption="Espectrofotómetro", width=300)
     st.info("📥 Inserte la disolución ácida y básica.")
     st.warning("⚠️ Error: Falta paso previo.")
+    st.session_state.mostrar_pregunta = True
 
-    respuesta = st.text_input("¿Qué paso hace falta?", key="blanco")
+if st.session_state.mostrar_pregunta:
+    respuesta = st.text_input("¿Qué paso hace falta?")
 
-if st.button("Verificar respuesta"):
-    if "blanco" in respuesta.lower():
-        img_espectro = Image.open("espectro.png")
-        st.image(img_espectro, caption="Espectro: Longitud de onda máxima", width=400)
-        st.success("✅ ¡Simulación completada! Ahora puedes analizar el espectro.")
-    else:
-        st.error("❌ Respuesta incorrecta. Intenta de nuevo.")
+    if st.button("Verificar respuesta"):
+        if "blanco" in respuesta.lower():
+            st.session_state.respuesta_correcta = True
+        else:
+            st.error("❌ Respuesta incorrecta. Intenta de nuevo.")
+
+if st.session_state.respuesta_correcta:
+    img_espectro = Image.open("espectro.png")
+    st.image(img_espectro, caption="Espectro: Longitud de onda máxima", width=400)
+    st.success("✅ ¡Simulación completada! Ahora puedes analizar el espectro.")
+
 
 

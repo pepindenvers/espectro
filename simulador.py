@@ -54,9 +54,13 @@ if st.button("Finalizar preparación"):
     st.warning("⚠️ Error: Falta paso previo.")
 
     respuesta = st.text_input("¿Qué paso hace falta?", key="blanco")
+
+if st.button("Verificar respuesta"):
     if "blanco" in respuesta.lower():
         img_espectro = Image.open("espectro.png")
         st.image(img_espectro, caption="Espectro: Longitud de onda máxima", width=400)
         st.success("✅ ¡Simulación completada! Ahora puedes analizar el espectro.")
+    else:
+        st.error("❌ Respuesta incorrecta. Intenta de nuevo.")
 
 
